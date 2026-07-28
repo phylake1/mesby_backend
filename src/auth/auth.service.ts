@@ -32,4 +32,4 @@ export class AuthService {
             admin: { id: admin.id, email: admin.email },
         };
     }
-} ƒ
+}

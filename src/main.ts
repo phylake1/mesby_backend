@@ -8,6 +8,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:5173', // dev
+      'http://localhost:5174', // dev
       'https://mesbyinsaat.com', // canlı domain (kendi domainini yaz)
     ],
   });

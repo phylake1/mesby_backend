@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectStatus {
+  DEVAM_EDIYOR
+  TAMAMLANDI
+  YAKINDA
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  description  String        @db.Text
+  status       ProjectStatus
+  deliveryYear Int?          // yapım aşamasındaysa teslim yılı
+  unitCount    Int?          // daire sayısı
+  city         String        // il
+  district     String        // ilçe
+  features     String[]      // proje özellikleri, madde madde
+  images       ProjectImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectImage {
+  id        String  @id @default(cuid())
+  url       String
+  publicId  String  // cloudinary public_id (silme işlemi için lazım)
+  order     Int     @default(0)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String // bcrypt hash
+
+  createdAt DateTime @default(now())
+}

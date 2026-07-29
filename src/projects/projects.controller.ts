@@ -34,7 +34,11 @@ export class ProjectsController {
     // ---- ADMIN (JWT gerekli) ----
     @UseGuards(JwtAuthGuard)
     @Post()
-    @UseInterceptors(FilesInterceptor('images', 10))
+    @UseInterceptors(
+        FilesInterceptor('images', 10, {
+            limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+        }),
+    )
     create(
         @Body() dto: CreateProjectDto,
         @UploadedFiles() files: Express.Multer.File[],
@@ -44,7 +48,11 @@ export class ProjectsController {
 
     @UseGuards(JwtAuthGuard)
     @Patch(':id')
-    @UseInterceptors(FilesInterceptor('images', 10))
+    @UseInterceptors(
+        FilesInterceptor('images', 10, {
+            limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+        }),
+    )
     update(
         @Param('id') id: string,
         @Body() dto: UpdateProjectDto,

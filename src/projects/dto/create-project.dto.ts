@@ -5,14 +5,14 @@ import { ProjectStatus } from '@prisma/client';
 export class CreateProjectDto {
     @IsString()
     @IsNotEmpty()
-    name: string;
+    name!: string;
 
     @IsString()
     @IsNotEmpty()
-    description: string;
+    description!: string;
 
     @IsEnum(ProjectStatus)
-    status: ProjectStatus;
+    status!: ProjectStatus;
 
     @IsOptional()
     @Type(() => Number)
@@ -26,15 +26,13 @@ export class CreateProjectDto {
 
     @IsString()
     @IsNotEmpty()
-    city: string;
+    city!: string;
 
     @IsString()
     @IsNotEmpty()
-    district: string;
+    district!: string;
 
-    // form-data ile string[] gönderirken JSON string olarak gelebilir,
-    // controller tarafında parse ediyoruz (aşağıda).
     @IsArray()
     @IsString({ each: true })
-    features: string[];
+    features!: string[];
 }

@@ -4,18 +4,29 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-    const hashedPassword = await bcrypt.hash('degistir-bu-sifreyi', 10);
+    const email = process.env.SEED_ADMIN_EMAIL ?? 'mesbyinsaat@gmail.com';
+    const password = process.env.SEED_ADMIN_PASSWORD;
+
+    if (!password) {
+        throw new Error(
+            'SEED_ADMIN_PASSWORD env değişkeni tanımlı değil. Seed işlemi güvenlik nedeniyle iptal edildi.',
+        );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.admin.upsert({
-        where: { email: 'admin@mesbyinsaat.com' },
-        update: {},
-        create: {
-            email: 'admin@mesbyinsaat.com',
-            password: hashedPassword,
-        },
+        where: { email },
+        update: { password: hashedPassword },
+        create: { email, password: hashedPassword },
     });
+
+    console.log(`Admin kullanıcısı hazır: ${email}`);
 }
 
 main()
-    .catch(console.error)
+    .catch((err) => {
+        console.error(err);
+        process.exit(1);
+    })
     .finally(() => prisma.$disconnect());

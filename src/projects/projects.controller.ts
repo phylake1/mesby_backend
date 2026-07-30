@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -15,6 +16,23 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+
+const IMAGE_UPLOAD_OPTIONS = {
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (
+        _req: unknown,
+        file: Express.Multer.File,
+        callback: (error: Error | null, acceptFile: boolean) => void,
+    ) => {
+        if (!file.mimetype.startsWith('image/')) {
+            return callback(
+                new BadRequestException('Sadece görsel dosyaları yüklenebilir.'),
+                false,
+            );
+        }
+        callback(null, true);
+    },
+};
 
 @Controller('projects')
 export class ProjectsController {
@@ -34,11 +52,7 @@ export class ProjectsController {
     // ---- ADMIN (JWT gerekli) ----
     @UseGuards(JwtAuthGuard)
     @Post()
-    @UseInterceptors(
-        FilesInterceptor('images', 10, {
-            limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-        }),
-    )
+    @UseInterceptors(FilesInterceptor('images', 10, IMAGE_UPLOAD_OPTIONS))
     create(
         @Body() dto: CreateProjectDto,
         @UploadedFiles() files: Express.Multer.File[],
@@ -48,11 +62,7 @@ export class ProjectsController {
 
     @UseGuards(JwtAuthGuard)
     @Patch(':id')
-    @UseInterceptors(
-        FilesInterceptor('images', 10, {
-            limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-        }),
-    )
+    @UseInterceptors(FilesInterceptor('images', 10, IMAGE_UPLOAD_OPTIONS))
     update(
         @Param('id') id: string,
         @Body() dto: UpdateProjectDto,

@@ -7,9 +7,11 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://localhost:5173', // dev
-      'http://localhost:5174', // dev
-      'https://mesbyinsaat.com', // canlı domain (kendi domainini yaz)
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://mesbyyapi.com',
+      'https://www.mesbyyapi.com',
+      'https://admin.mesbyyapi.com',
     ],
   });
 
